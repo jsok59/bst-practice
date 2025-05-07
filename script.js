@@ -33,7 +33,9 @@ const createTree = function (array) {
 		return root;
 	};
 
-	const deleteItem = function (value) {};
+	const deleteItem = function (value) {
+		deleteItemRecursively(root, value);
+	};
 
 	//recursive helper for delete
 	const deleteItemRecursively = function (root, value) {
@@ -41,6 +43,11 @@ const createTree = function (array) {
 			if (root.leftNode === null && root.rightNode === null) return null;
 			if (root.leftNode === null) return root.rightNode;
 			if (root.rightNode === null) return root.leftNode;
+			if (root.leftNode !== null && root.rightNode !== null) {
+				root.value = findLeftestNode(root.rightNode);
+				root.rightNode = deleteItemRecursively(root.rightNode, root.value);
+				return root;
+			}
 		}
 
 		if (root.value > value) {
@@ -48,10 +55,61 @@ const createTree = function (array) {
 		} else {
 			root.rightNode = deleteItemRecursively(root.rightNode, value);
 		}
-		return node;
+		return root;
 	};
 
-	return { root, insert };
+	//recursive helper of the helper for delete xD
+	const findLeftestNode = function (root) {
+		if (root.leftNode === null) return root.value;
+		return findLeftestNode(root.leftNode);
+	};
+
+	const find = function (value) {
+		let iter = root;
+		while (iter.value !== value || iter === null) {
+			if (iter.value > value) {
+				iter = iter.leftNode;
+			} else {
+				iter = iter.rightNode;
+			}
+		}
+
+		if (iter === null) {
+			console.log(`Could not find ${value}`);
+			return;
+		} else {
+			return iter;
+		}
+	};
+
+	const levelOrder = function (callback, queue = [root]) {
+		if (queue.length === 0) return;
+		const node = queue.shift();
+		callback(node);
+		if (node.leftNode !== null) {
+			queue.push(node.leftNode);
+		}
+		if (node.rightNode !== null) {
+			queue.push(node.rightNode);
+		}
+		levelOrder(callback, queue);
+	};
+
+	const levelOrderIterative = function (callback) {
+		const queue = [root];
+		while (queue.length !== 0) {
+			const node = queue.shift();
+			callback(node);
+			if (node.leftNode !== null) {
+				queue.push(node.leftNode);
+			}
+			if (node.rightNode !== null) {
+				queue.push(node.rightNode);
+			}
+		}
+	};
+
+	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative };
 };
 
 //helper function to create tree
