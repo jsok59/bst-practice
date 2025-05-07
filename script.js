@@ -83,16 +83,24 @@ const createTree = function (array) {
 	};
 
 	const levelOrder = function (callback, queue = [root]) {
-		if (queue.length === 0) return;
-		const node = queue.shift();
-		callback(node);
-		if (node.leftNode !== null) {
-			queue.push(node.leftNode);
+		try {
+			if(typeof callback !== "function") {
+				throw new Error("This is not a function")
+			}
+		
+			if (queue.length === 0) return;
+			const node = queue.shift();
+			callback(node);
+			if (node.leftNode !== null) {
+				queue.push(node.leftNode);
+			}
+			if (node.rightNode !== null) {
+				queue.push(node.rightNode);
+			}
+			levelOrder(callback, queue);
+		} catch (e) {
+			console.log(e)
 		}
-		if (node.rightNode !== null) {
-			queue.push(node.rightNode);
-		}
-		levelOrder(callback, queue);
 	};
 
 	const levelOrderIterative = function (callback) {
@@ -109,7 +117,26 @@ const createTree = function (array) {
 		}
 	};
 
-	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative };
+
+	const inOrder = function(callback) {
+		inOrderRecursive(callback, root)
+	}
+
+	const inOrderRecursive = function(callback, root) {
+		if (root === null) return
+		inOrderRecursive(callback, root.leftNode)
+		callback(root.value)
+		inOrderRecursive(callback, root.rightNode)
+	}
+
+	const height = function(value) {
+		const node = find(value)
+		
+	}
+	
+	
+
+	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative, inOrder };
 };
 
 //helper function to create tree
