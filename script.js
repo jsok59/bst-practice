@@ -39,8 +39,12 @@ const createTree = function (array) {
 
 	//recursive helper for delete
 	const deleteItemRecursively = function (root, value) {
+		if (root === null) {
+			console.log("could not find item to delete")
+			return null;
+		}
 		if (root.value === value) {
-			if (root.leftNode === null && root.rightNode === null) return null;
+			// if (root.leftNode === null && root.rightNode === null) return null;
 			if (root.leftNode === null) return root.rightNode;
 			if (root.rightNode === null) return root.leftNode;
 			if (root.leftNode !== null && root.rightNode !== null) {
@@ -66,20 +70,17 @@ const createTree = function (array) {
 
 	const find = function (value) {
 		let iter = root;
-		while (iter.value !== value || iter === null) {
-			if (iter.value > value) {
+		while (iter !== null) {
+			if (iter.value === value) {
+				return iter
+			}else if (iter.value > value) {
 				iter = iter.leftNode;
 			} else {
 				iter = iter.rightNode;
 			}
 		}
 
-		if (iter === null) {
-			console.log(`Could not find ${value}`);
-			return;
-		} else {
-			return iter;
-		}
+		return null;
 	};
 
 	const levelOrder = function (callback, queue = [root]) {
@@ -130,7 +131,7 @@ const createTree = function (array) {
 
 	const height = function (value) {
 		const node = find(value);
-		if (node === undefined) {
+		if (node === null) {
 			return null;
 		} else {
 			return heightRecursive(value, node);
@@ -145,8 +146,10 @@ const createTree = function (array) {
 	const depth = function (value) {
 		let iter = root;
 		let counter = 0;
-		while (iter.value !== value || iter === null) {
-			if (iter.value > value) {
+		while (iter !== null) {
+			if (iter.value === value) {
+				return counter;
+			} else if (iter.value > value) {
 				iter = iter.leftNode;
 				counter++;
 			} else {
@@ -155,11 +158,9 @@ const createTree = function (array) {
 			}
 		}
 
-		if (iter === null) {
-			return null;
-		} else {
-			return counter;
-		}
+		
+
+		return null;
 	};
 
 	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative, inOrder, height, depth };
