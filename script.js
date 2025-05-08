@@ -15,7 +15,15 @@ const createTree = function (array) {
 		.sort((a, b) => a - b);
 	const start = 0;
 	const end = array.length - 1;
-	const root = buildTree(array, start, end);
+	let root = buildTree(array, start, end);
+
+	const getRoot = function () {
+		return root;
+	};
+
+	const setRoot = function (newRoot) {
+		root = newRoot;
+	};
 
 	const insert = function (value) {
 		insertRecursively(root, value);
@@ -40,7 +48,7 @@ const createTree = function (array) {
 	//recursive helper for delete
 	const deleteItemRecursively = function (root, value) {
 		if (root === null) {
-			console.log("could not find item to delete")
+			console.log("could not find item to delete");
 			return null;
 		}
 		if (root.value === value) {
@@ -72,8 +80,8 @@ const createTree = function (array) {
 		let iter = root;
 		while (iter !== null) {
 			if (iter.value === value) {
-				return iter
-			}else if (iter.value > value) {
+				return iter;
+			} else if (iter.value > value) {
 				iter = iter.leftNode;
 			} else {
 				iter = iter.rightNode;
@@ -138,7 +146,7 @@ const createTree = function (array) {
 		}
 	};
 
-	const heightRecursive = function (value, root) {
+	const heightRecursive = function (value = null, root) {
 		if (root === null) return -1;
 		return 1 + Math.max(heightRecursive(value, root.leftNode), heightRecursive(value, root.rightNode));
 	};
@@ -158,12 +166,29 @@ const createTree = function (array) {
 			}
 		}
 
-		
-
 		return null;
 	};
 
-	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative, inOrder, height, depth };
+	const isBalanced = function () {
+		if (root === null) return [-1, true];
+
+		const arrLeft = isBalanced(root.leftNode);
+		const arrRight = isBalanced(root.rightNode);
+		const value1 = 1 + Math.max(arrLeft[0], arrRight[0]);
+		const value2 = Math.abs(arrLeft[0] - arrRight[0]) <= 1 && arrLeft[1] && arrRight[1];
+
+		return [value1, value2];
+	};
+
+	const rebalance = function () {
+		const array = [];
+		inOrder((element) => array.push(element));
+		const start = 0;
+		const end = array.length - 1;
+		setRoot(buildTree(array, start, end));
+	};
+
+	return { getRoot, setRoot, insert, deleteItem, find, levelOrder, levelOrderIterative, inOrder, height, depth, isBalanced, rebalance };
 };
 
 //helper function to create tree
@@ -189,14 +214,8 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 	}
 };
 
-const tree = createTree([1, 7, 4]);
-tree.insert(10);
-tree.insert(8);
-tree.insert(89);
-tree.insert(0);
-tree.insert(2);
-tree.insert(7);
+const tree = createTree([1, 7, 4, 10, 8, 89, 0, 2, 7]);
 
-prettyPrint(tree.root);
+prettyPrint(tree.getRoot());
 
 window.debug = { buildTree, prettyPrint, createTree };
