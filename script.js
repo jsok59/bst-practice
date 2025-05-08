@@ -84,10 +84,10 @@ const createTree = function (array) {
 
 	const levelOrder = function (callback, queue = [root]) {
 		try {
-			if(typeof callback !== "function") {
-				throw new Error("This is not a function")
+			if (typeof callback !== "function") {
+				throw new Error("This is not a function");
 			}
-		
+
 			if (queue.length === 0) return;
 			const node = queue.shift();
 			callback(node);
@@ -99,7 +99,7 @@ const createTree = function (array) {
 			}
 			levelOrder(callback, queue);
 		} catch (e) {
-			console.log(e)
+			console.log(e);
 		}
 	};
 
@@ -117,26 +117,52 @@ const createTree = function (array) {
 		}
 	};
 
+	const inOrder = function (callback) {
+		inOrderRecursive(callback, root);
+	};
 
-	const inOrder = function(callback) {
-		inOrderRecursive(callback, root)
-	}
+	const inOrderRecursive = function (callback, root) {
+		if (root === null) return;
+		inOrderRecursive(callback, root.leftNode);
+		callback(root.value);
+		inOrderRecursive(callback, root.rightNode);
+	};
 
-	const inOrderRecursive = function(callback, root) {
-		if (root === null) return
-		inOrderRecursive(callback, root.leftNode)
-		callback(root.value)
-		inOrderRecursive(callback, root.rightNode)
-	}
+	const height = function (value) {
+		const node = find(value);
+		if (node === undefined) {
+			return null;
+		} else {
+			return heightRecursive(value, node);
+		}
+	};
 
-	const height = function(value) {
-		const node = find(value)
-		
-	}
-	
-	
+	const heightRecursive = function (value, root) {
+		if (root === null) return -1;
+		return 1 + Math.max(heightRecursive(value, root.leftNode), heightRecursive(value, root.rightNode));
+	};
 
-	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative, inOrder };
+	const depth = function (value) {
+		let iter = root;
+		let counter = 0;
+		while (iter.value !== value || iter === null) {
+			if (iter.value > value) {
+				iter = iter.leftNode;
+				counter++;
+			} else {
+				iter = iter.rightNode;
+				counter++;
+			}
+		}
+
+		if (iter === null) {
+			return null;
+		} else {
+			return counter;
+		}
+	};
+
+	return { root, insert, deleteItem, find, levelOrder, levelOrderIterative, inOrder, height, depth };
 };
 
 //helper function to create tree
